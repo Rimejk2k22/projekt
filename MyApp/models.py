@@ -46,16 +46,16 @@ class UserBid(models.Model):
         return self.delivery_offer.name
 
 
-class Room(models.Model):
-    name = models.CharField(max_length=128)
-    description = models.TextField(null=True, blank=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    participants = models.ManyToManyField(User, related_name="participants", blank=True)
-    delivery_offer = models.ManyToManyField(DeliveryOffer)
+# class Room(models.Model):
+#     name = models.CharField(max_length=128)
+#     description = models.TextField(null=True, blank=True)
+#     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+#     participants = models.ManyToManyField(User, related_name="participants", blank=True)
+#     delivery_offer = models.ManyToManyField(DeliveryOffer)
+#
+#     def __str__(self):
+#         return self.name
 
-    def __str__(self):
-        return self.name
 
-
-class MailBox(models.Model):
-    owner = models.OneToOneField(User, on_delete=models.CASCADE)
+# class MailBox(models.Model):
+#     owner = models.OneToOneField(User, on_delete=models.CASCADE)

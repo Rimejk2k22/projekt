@@ -16,6 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from MyApp import views as v
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', v.IndexView.as_view(), name="index"),
+    path('login/', v.LoginView.as_view(), name="login"),
+    path('logout/', v.LogoutView.as_view(), name="logout"),
+    path('register/', v.RegisterView.as_view(), name="register"),
+    path('dashboard/', v.DashboardView.as_view(), name="dashboard"),
+    path('add-delivery-offer/', v.CreateDeliveryOfferView.as_view(), name="add-delivery-offer"),
+
 ]

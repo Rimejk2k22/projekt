@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<header>
+    <h2>Dashboard</h2>
+    {% if request.user.is_authenticated %}
+    <p>Zalogowano jako {{ request.user.username }}</p>
+    <button><a href="{% url 'logout' %}">Wyloguj</a></button>
+    {% endif %}
+</header>
+
+    <hr style="border: 3px solid cadetblue">
+    <p><button><a href="{% url 'add-delivery-offer' %}">Dodaj oferte</a></button></p>
+
+
+    {% if all_delivery_offers %}
+        <ul>
+            {% for delivery_offer in all_delivery_offers %}
+                <li>
+                    <p>Nazwa: {{ delivery_offer.name }}</p>
+                    <p>Zleceniodawca: {{ delivery_offer.owner.username }}</p>
+                    <p>Dystans: {{ delivery_offer.distance }}</p>
+                    <p>Cena: {{ delivery_offer.wage }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <hr style="border: 3px cadetblue">
+
+</body>
+</html>
