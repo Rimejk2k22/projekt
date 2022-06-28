@@ -27,6 +27,7 @@ urlpatterns = [
     path('dashboard/', v.DashboardView.as_view(), name="dashboard"),
     path('add-delivery-offer/', v.CreateDeliveryOfferView.as_view(), name="delivery-offer-add"),
     path('delivery-detail/<int:delivery_id>/', v.DeliveryOfferDetailView.as_view(), name="delivery-offer-detail"),
-    path('delivery-detail/modify/<int:delivery_id>', v.DeliveryOfferModifyView.as_view(), name="delivery-offer-modify")
+    path('delivery-detail/modify/<int:delivery_id>', v.DeliveryOfferModifyView.as_view(), name="delivery-offer-modify"),
+    path('delivery-detail/delete/<int:delivery_id>', v.DeliveryOfferDeleteView.as_view(), name="delivery-offer-delete"),
 
 ]

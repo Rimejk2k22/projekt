@@ -17,22 +17,10 @@ class DeliveryInfo(models.Model):
     def __str__(self):
         return self.deliveryoffer.name
 
-    def get_instance_update(self,
-                            city_from=city_from,
-                            city_to=city_to,
-                            street_from=street_from,
-                            street_to=street_to,
-                            street_from_number=street_from_number,
-                            street_to_number=street_to_number,
-                            extras=extras):
-
-        self.city_from = city_from
-        self.city_to = city_to
-        self.street_from = street_from
-        self.street_to = street_to
-        self.street_from_number = street_from_number
-        self.street_to_number = street_to_number
-        self.extras = extras
+    def get_instance_update(self, **kwargs):
+        for attr in self.__dict__:
+            if attr and attr in kwargs:
+                self.__setattr__(f'{attr}', kwargs[f'{attr}'])
         self.save()
 
 
@@ -54,16 +42,10 @@ class DeliveryOffer(models.Model):
     def __str__(self):
         return self.name
 
-    def get_instance_update(self,
-                            name=name,
-                            description=description,
-                            wage=wage,
-                            distance=distance):
-
-        self.name = name
-        self.description = description
-        self.wage = wage
-        self.distance = distance
+    def get_instance_update(self, **kwargs):
+        for attr in self.__dict__:
+            if attr in kwargs:
+                self.__setattr__(f'{attr}', kwargs[f'{attr}'])
         self.save()
 
 

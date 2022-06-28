@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Permission
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.conf import settings
 from django.views import View
 
@@ -126,20 +126,62 @@ class CreateDeliveryOfferView(LoginRequiredMixin, View):
 class DeliveryOfferDetailView(View):
     def get(self, request, delivery_id):
         delivery_offer = m.DeliveryOffer.objects.get(pk=delivery_id)
-        context = {'delivery_offer': delivery_offer}
+        bids = delivery_offer.userbid_set.all()
+
+        context = {
+            'delivery_offer': delivery_offer,
+            'bids': bids
+        }
         return render(request, 'delivery-offer-detail.html', context=context)
 
+    def post(self, request, delivery_id):
+        data = request.POST
+        delivery_offer = m.DeliveryOffer.objects.get(pk=delivery_id)
 
-class DeliveryOfferModifyView(View):
+        user_bid = get_object_or_404(m.UserBid, pk=data.get('final_bid'))
+        if user_bid and delivery_offer.is_active:
+            delivery_offer.get_instance_update(
+                contractor_id=user_bid.owner,
+                is_active=0,
+                final_bid=user_bid.value
+            )
+
+            return redirect('delivery-offer-detail', delivery_id=delivery_offer.pk)
+
+        bid = data.get('bid')
+        m.UserBid.objects.create(
+            owner=request.user,
+            value=bid,
+            delivery_offer=delivery_offer
+        )
+        return redirect('delivery-offer-detail', delivery_id=delivery_offer.pk)
+
+
+class DeliveryOfferModifyView(LoginRequiredMixin, View):
+    login_url = '{}?next={}'.format(settings.LOGIN_URL, 'delivery-offer-modify')
+
     def get(self, request, delivery_id):
         delivery_offer = m.DeliveryOffer.objects.get(pk=delivery_id)
         context = {'delivery_offer': delivery_offer}
+
+        # Do not allow to edit proceeded offer.
+        if not delivery_offer.is_active:
+            return redirect('dashboard')
+
+        # You are not owner, denied.
+        if request.user != delivery_offer.owner:
+            return HttpResponse('Nie masz uprawnien.')
+
         return render(request, 'delivery-offer-modify.html', context=context)
 
     def post(self, request, delivery_id):
         data = request.POST
         delivery_offer = m.DeliveryOffer.objects.get(pk=delivery_id)
         delivery_info = m.DeliveryInfo.objects.get(deliveryoffer=delivery_offer)
+
+        # You are not owner, denied.
+        if request.user != delivery_offer.owner:
+            return HttpResponse('Nie masz uprawnien.')
 
         name = data.get('name')
         description = data.get('description')
@@ -167,7 +209,6 @@ class DeliveryOfferModifyView(View):
             street_to_number=street_to_number,
             extras=extras
         )
-        delivery_info.save()
 
         # Update DeliveryOffer Instance.
         delivery_offer.get_instance_update(
@@ -178,3 +219,23 @@ class DeliveryOfferModifyView(View):
         )
 
         return redirect('delivery-offer-detail', delivery_id=delivery_offer.pk)
+
+
+class DeliveryOfferDeleteView(LoginRequiredMixin, View):
+    login_url = '{}?next={}'.format(settings.LOGIN_URL, 'delivery-offer-delete')
+
+    def get(self, request, delivery_id):
+        delivery_offer = m.DeliveryOffer.objects.get(pk=delivery_id)
+
+        # Do not allow to edit proceeded offer.
+        if not delivery_offer.is_active:
+            return redirect('dashboard')
+
+        # You are not owner, denied.
+        if request.user != delivery_offer.owner:
+            return HttpResponse('Nie masz uprawnien.')
+
+        delivery_info = delivery_offer.delivery_info
+        delivery_offer.delete()
+        delivery_info.delete()
+        return redirect('dashboard')
