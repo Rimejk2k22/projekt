@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <header>
+        <h2>Delivery Detail</h2>
+        <button><a href="{% url 'dashboard' %}">Wroc</a></button>
+        <button><a href="{% url 'delivery-offer-modify' delivery_offer.pk %}">Zmien Dane</a></button>
+        <br>
+        Status: {% if delivery_offer.is_active %}Aktywne{% else %}Zakonczone<p>Wykonawca: {{ delivery_offer.contractor.username }}</p>{% endif %}
+    </header>
+
+    <ul>
+        <li>
+            <p><h3>Zleceniodawca: {{ delivery_offer.owner.username }}</h3></p>
+            <p>Nazwa: {{ delivery_offer.name }}</p>
+            <p>Dystans: {{ delivery_offer.distance }}</p>
+            <p>Cena: {{ delivery_offer.wage }}</p>
+
+            <h3>Miejsce Zaladunku</h3>
+                <p>Miasto: {{ delivery_offer.delivery_info.city_from }}</p>
+                <p>Ulica: {{ delivery_offer.delivery_info.street_from }} {{ delivery_offer.delivery_info.street_from_number }}</p>
+
+            <h3>Miejsce Docelowe</h3>
+                <p>Miasto: {{ delivery_offer.delivery_info.city_to }}</p>
+                <p>Ulica: {{ delivery_offer.delivery_info.street_to }} {{ delivery_offer.delivery_info.street_to_number }}</p>
+
+            {% if delivery_offer.description %}
+                <h4>Opis zlecenia</h4>
+                <p>{{ delivery_offer.description }}</p>
+            {% endif %}
+
+            {% if delivery_offer.delivery_info.extras %}
+                <h4>Szczegolowy opis miejsca załadunku/rozładunku</h4>
+                <p>{{ delivery_offer.delivery_info.extras }}</p>
+            {% endif %}
+            <hr>
+        </li>
+    </ul>
+
+</body>
+</html>

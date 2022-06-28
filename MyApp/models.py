@@ -17,6 +17,24 @@ class DeliveryInfo(models.Model):
     def __str__(self):
         return self.deliveryoffer.name
 
+    def get_instance_update(self,
+                            city_from=city_from,
+                            city_to=city_to,
+                            street_from=street_from,
+                            street_to=street_to,
+                            street_from_number=street_from_number,
+                            street_to_number=street_to_number,
+                            extras=extras):
+
+        self.city_from = city_from
+        self.city_to = city_to
+        self.street_from = street_from
+        self.street_to = street_to
+        self.street_from_number = street_from_number
+        self.street_to_number = street_to_number
+        self.extras = extras
+        self.save()
+
 
 class DeliveryOffer(models.Model):
     class IsActive(models.IntegerChoices):
@@ -35,6 +53,18 @@ class DeliveryOffer(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_instance_update(self,
+                            name=name,
+                            description=description,
+                            wage=wage,
+                            distance=distance):
+
+        self.name = name
+        self.description = description
+        self.wage = wage
+        self.distance = distance
+        self.save()
 
 
 class UserBid(models.Model):
