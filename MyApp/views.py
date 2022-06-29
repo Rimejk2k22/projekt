@@ -239,3 +239,10 @@ class DeliveryOfferDeleteView(LoginRequiredMixin, View):
         delivery_offer.delete()
         delivery_info.delete()
         return redirect('dashboard')
+
+
+class NotificationDetailView(View):
+    def get(self, request):
+        user = request.user
+        context = {'user': user}
+        return render(request, 'user-notifications.html', context=context)
