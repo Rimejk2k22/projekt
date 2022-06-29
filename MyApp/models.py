@@ -48,6 +48,22 @@ class DeliveryOffer(models.Model):
                 self.__setattr__(f'{attr}', kwargs[f'{attr}'])
         self.save()
 
+    def save(self,
+             force_insert=False,
+             force_update=False,
+             using=None,
+             update_fields=None
+             ):
+
+        if not self.is_active:
+            msg = f"Twoja oferta zostala zaakceptowana przez {self.owner.username}."
+            Notification.objects.create(
+                delivery_offer=self,
+                user=self.contractor_id,
+                title=msg
+            )
+        super().save()
+
 
 class UserBid(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -56,6 +72,19 @@ class UserBid(models.Model):
 
     def __str__(self):
         return self.delivery_offer.name
+
+
+class Notification(models.Model):
+    delivery_offer = models.ForeignKey(DeliveryOffer, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    title = models.CharField(max_length=256)
+
+
+class Message(models.Model):
+    title = models.CharField(max_length=128)
+    content = models.TextField()
+    message_from = models.ForeignKey(User, on_delete=models.CASCADE, related_name="message_from", null=True)
+    message_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name="message_to", null=True)
 
 
 # class Room(models.Model):
@@ -68,6 +97,3 @@ class UserBid(models.Model):
 #     def __str__(self):
 #         return self.name
 
-
-# class MailBox(models.Model):
-#     owner = models.OneToOneField(User, on_delete=models.CASCADE)
