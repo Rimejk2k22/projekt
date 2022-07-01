@@ -13,7 +13,9 @@
     <h2>Dashboard</h2>
     {% if request.user.is_authenticated %}
     <p>Zalogowano jako {{ request.user.username }}</p>
+    <button><a href="{% url 'user-delivery-offers' %}">Twoje zlecenia</a></button>
     <button><a href="{% url 'logout' %}">Wyloguj</a></button>
+    <button><a href="{% url 'user-notifications' %}">Powiadomienia</a></button>
     {% endif %}
 </header>
 
@@ -24,14 +26,16 @@
     {% if all_delivery_offers %}
         <ul>
             {% for delivery_offer in all_delivery_offers %}
-                <li>
-                    <p>Nazwa: {{ delivery_offer.name }}</p>
-                    <p>Zleceniodawca: {{ delivery_offer.owner.username }}</p>
-                    <p>Dystans: {{ delivery_offer.distance }}</p>
-                    <p>Cena: {{ delivery_offer.wage }}</p>
-                </li>
-                <button><a href="{% url 'delivery-offer-detail' delivery_offer.pk %}">Szczegoly zlecenia</a></button>
-                <hr>
+                {% if delivery_offer.is_active %}
+                    <li>
+                        <p>Nazwa: {{ delivery_offer.name }}</p>
+                        <p>Zleceniodawca: {{ delivery_offer.owner.username }}</p>
+                        <p>Dystans: {{ delivery_offer.distance }}</p>
+                        <p>Cena: {{ delivery_offer.wage }}</p>
+                    </li>
+                    <button><a href="{% url 'delivery-offer-detail' delivery_offer.pk %}">Szczegoly zlecenia</a></button>
+                    <hr>
+                {% endif %}
             {% endfor %}
         </ul>
     {% endif %}

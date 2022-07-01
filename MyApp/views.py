@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.db.models import F, Q
 from django.contrib.auth.models import Permission
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
@@ -138,15 +139,14 @@ class DeliveryOfferDetailView(View):
         data = request.POST
         delivery_offer = m.DeliveryOffer.objects.get(pk=delivery_id)
 
-        user_bid = get_object_or_404(m.UserBid, pk=data.get('final_bid'))
+        user_bid = m.UserBid.objects.all().filter(pk=data.get('final_bid')).first()
         if user_bid and delivery_offer.is_active:
             delivery_offer.get_instance_update(
-                contractor_id=user_bid.owner,
+                contractor_id=user_bid.owner_id,
                 is_active=0,
                 final_bid=user_bid.value
             )
-
-            return redirect('delivery-offer-detail', delivery_id=delivery_offer.pk)
+            return redirect('user-delivery-offers')
 
         bid = data.get('bid')
         m.UserBid.objects.create(
@@ -246,3 +246,35 @@ class NotificationDetailView(View):
         user = request.user
         context = {'user': user}
         return render(request, 'user-notifications.html', context=context)
+
+
+class UserDeliveryOffer(View):
+    def get(self, request):
+
+        delivery_offers = m.DeliveryOffer.objects.all().filter(Q(owner=request.user) | Q(contractor=request.user), is_active=0)
+
+        context = {'delivery_offers': delivery_offers}
+        return render(request, 'user-delivery-offers.html', context=context)
+
+
+class UserSendMessageView(View):
+    def get(self, request, delivery_id):
+        delivery_offer = m.DeliveryOffer.objects.get(pk=delivery_id)
+
+        if request.user != delivery_offer.owner and request.user != delivery_offer.contractor:
+            return HttpResponse('<h2>Not allowed</h2>')
+
+        context = {'delivery_offer': delivery_offer}
+        return render(request, 'user-send-message.html', context=context)
+
+    def post(self, request, delivery_id):
+        delivery_offer = m.DeliveryOffer.objects.get(pk=delivery_id)
+        user = delivery_offer.owner if request.user != delivery_offer.owner else delivery_offer.contractor
+
+        content = request.POST.get('content')
+
+        m.Message.objects.create(content=content, delivery_offer=delivery_offer, message_from=request.user, message_to=user)
+
+        return redirect('user-send-message', delivery_id=delivery_offer.pk)
+
+

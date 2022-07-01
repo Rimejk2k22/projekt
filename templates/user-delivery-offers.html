@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <header>
+        <h2>Your offers</h2>
+    </header>
+    <button><a href="{% url 'dashboard' %}">Wroc</a></button>
+
+    {% if delivery_offers %}
+
+    <ul>
+        {% for delivery_offer in delivery_offers %}
+
+            <li>
+                <p>Nazwa: {{ delivery_offer.name }}</p>
+                <p>Zleceniodawca: {{ delivery_offer.owner.username }}</p>
+                <p>Dystans: {{ delivery_offer.distance }}</p>
+                <p>Cena: {{ delivery_offer.wage }}</p>
+            </li>
+            <button><a href="{% url 'delivery-offer-detail' delivery_offer.pk %}">Szczegoly zlecenia</a></button>
+            <button><a href="{% url 'user-send-message' delivery_offer.pk %}">Chat</a></button>
+
+            <hr>
+
+        {% endfor %}
+    </ul>
+
+
+    {% else %}
+        <h2>You have no offers.</h2>
+    {% endif %}
+
+</body>
+</html>

@@ -31,7 +31,7 @@ class DeliveryOffer(models.Model):
 
     name = models.CharField(max_length=128)
     description = models.TextField(null=True, blank=True)
-    wage = models.DecimalField(max_digits=256, decimal_places=2, null=True, blank=True)
+    wage = models.DecimalField(max_digits=256, decimal_places=2)
     distance = models.DecimalField(max_digits=32, decimal_places=3)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     contractor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="contractor", null=True, blank=True)
@@ -54,13 +54,19 @@ class DeliveryOffer(models.Model):
              using=None,
              update_fields=None
              ):
-
         if not self.is_active:
-            msg = f"Twoja oferta zostala zaakceptowana przez {self.owner.username}."
+            msg_contractor = f"Twoja oferta zostala zaakceptowana przez {self.owner.username}."
             Notification.objects.create(
                 delivery_offer=self,
-                user=self.contractor_id,
-                title=msg
+                user=self.contractor,
+                title=msg_contractor
+            )
+
+            msg_owner = f"Zaakceptowales oferte uzytkownika {self.contractor.username} ({self.final_bid})."
+            Notification.objects.create(
+                delivery_offer=self,
+                user=self.owner,
+                title=msg_owner
             )
         super().save()
 
@@ -76,15 +82,16 @@ class UserBid(models.Model):
 
 class Notification(models.Model):
     delivery_offer = models.ForeignKey(DeliveryOffer, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=256)
 
 
 class Message(models.Model):
-    title = models.CharField(max_length=128)
     content = models.TextField()
-    message_from = models.ForeignKey(User, on_delete=models.CASCADE, related_name="message_from", null=True)
-    message_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name="message_to", null=True)
+    delivery_offer = models.ForeignKey(DeliveryOffer, on_delete=models.CASCADE)
+    message_from = models.ForeignKey(User, on_delete=models.CASCADE, related_name="message_from")
+    message_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name="message_to")
+    date = models.DateTimeField(auto_now_add=True)
 
 
 # class Room(models.Model):
