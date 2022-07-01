@@ -11,7 +11,7 @@
 
     <header>
         <h2>Notifications</h2>
-        <button><a href="{{ request.META.HTTP_REFERER }}">Wroc</a></button>
+        <button><a href="{% url 'dashboard' %}">Wroc</a></button>
         <hr>
     </header>
 
@@ -20,7 +20,9 @@
         <ul>
 
         {% for notification in user.notification_set.all %}
-            <li>{{ notification.title }}</li>
+            <li>{{ notification.title }}
+                <button><a href="{% url 'user-notification-delete' notification.pk %}">Usun</a></button>
+            </li>
         {% endfor %}
          </ul>
 

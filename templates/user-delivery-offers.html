@@ -26,8 +26,9 @@
                 <p>Cena: {{ delivery_offer.wage }}</p>
             </li>
             <button><a href="{% url 'delivery-offer-detail' delivery_offer.pk %}">Szczegoly zlecenia</a></button>
-            <button><a href="{% url 'user-send-message' delivery_offer.pk %}">Chat</a></button>
-
+            {% if not delivery_offer.is_active %}
+                <button><a href="{% url 'user-send-message' delivery_offer.pk %}">Chat</a></button>
+            {% endif %}
             <hr>
 
         {% endfor %}

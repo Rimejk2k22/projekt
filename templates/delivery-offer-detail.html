@@ -56,7 +56,7 @@
         <hr>
     {% endif %}
 
-    {% if request.user != delivery_offer.owner and delivery_offer.is_active %}
+    {% if request.user != delivery_offer.owner and delivery_offer.is_active and request.user.is_authenticated %}
     <h2>Zloz oferte</h2>
     <form method="POST" action="">
         {% csrf_token %}

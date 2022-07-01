@@ -17,6 +17,7 @@
     <form method="POST" action="">
         {% csrf_token %}
 
+        <input type="email" name="email" placeholder="Email">
         <input type="text" name="username" placeholder="Login">
         <input type="password" name="password" placeholder="Haslo">
         <input type="password" name="password2" placeholder="Powtorz haslo">
@@ -25,6 +26,15 @@
     </form>
 
     <button><a href="/">Wroc</a></button>
+
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
 
 </body>

@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'MyProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3_02',
     }
 }
 
@@ -104,11 +104,24 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Custom validators.
+LOGIN_EMAIL_VALIDATORS = [
+    {
+        'NAME': 'MyApp.validators.email_login_validation.LoginExistsValidator',
+    },
+    {
+        'NAME': 'MyApp.validators.email_login_validation.LoginLengthValidator',
+    },
+    {
+        'NAME': 'MyApp.validators.email_login_validation.EmailExistsValidator',
+    },
+]
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pl'
 
 TIME_ZONE = 'UTC'
 
@@ -124,6 +137,12 @@ STATIC_URL = 'static/'
 
 # Default path for login view.
 LOGIN_URL = '/login/'
+
+# Setting User model.
+AUTH_USER_MODEL = 'MyApp.User'
+
+# Flash messages storage.
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

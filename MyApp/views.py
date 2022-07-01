@@ -1,12 +1,16 @@
 from django.contrib.auth import authenticate, login, logout
-from django.db.models import F, Q
-from django.contrib.auth.models import Permission
-from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
-from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
+from django.core.exceptions import ValidationError
+from django.db.models import Q
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, redirect, HttpResponse
+import django.contrib.auth.password_validation as pv
 from django.conf import settings
 from django.views import View
 
 from MyApp import models as m
+import MyApp.validators.email_login_validation as elv
+import MyApp.validators.password_equal_validator as pev
 
 
 # Create your views here.
@@ -45,7 +49,8 @@ class LoginView(View):
             return redirect('dashboard')
 
         else:
-            return HttpResponse('<h2>Blad</h2><button><a href="/login/">Wroc</a></button>')
+            messages.add_message(request, messages.ERROR, 'Niepoprawny Login lub haslo.')
+            return redirect('login')
 
 
 class LogoutView(View):
@@ -56,23 +61,60 @@ class LogoutView(View):
 
 class RegisterView(View):
     def get(self, request):
+
         return render(request, 'register.html')
 
     def post(self, request):
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        password2 = request.POST.get('password2')
+        data = request.POST
+        email = data.get('email')
+        username = data.get('username')
+        password = data.get('password')
+        password2 = data.get('password2')
 
-        # Passwords vary.
-        if password != password2:
-            return redirect('/register/')
+        # All validators needed to validate password, username and email.
+        all_password_validators = pv.get_password_validators(settings.AUTH_PASSWORD_VALIDATORS)
+        all_login_email_validators = elv.get_login_email_validators(settings.LOGIN_EMAIL_VALIDATORS)
+
+        # Error messages from all try, except blocks.
+        errors = []
+        try:
+            # Validate password.
+            pv.validate_password(password=password, password_validators=all_password_validators)
+        except ValidationError as password_errors:
+            errors.extend(password_errors)
+
+        try:
+            # Validate password similarity.
+            pev.PasswordEqualValidator.validate(password=password, password2=password2)
+        except ValidationError as password_equal_error:
+            errors.extend(password_equal_error)
+
+        try:
+            # Validate login and email.
+            elv.validate_login_email(username=username, email=email, login_email_validators=all_login_email_validators)
+        except ValidationError as login_username_errors:
+            errors.extend(login_username_errors)
+
+        # If any errors, loop through adding single error to flash messages.
+        if errors:
+            for error in errors:
+                messages.add_message(request, messages.ERROR, error)
+            return redirect('register')
+
 
         # User Instance.
-        user = m.User.objects.create_user(username=username, password=password)
+        user = m.User.objects.create_user(email=email, username=username, password=password)
 
         # After Successful User creation, automatically login.
         login(request, user)
         return redirect('dashboard')
+
+
+class UserProfile(View):
+    def get(self, request):
+        user = request.user
+        context = {'user': user}
+        return render(request, 'user-profile.html', context=context)
 
 
 class CreateDeliveryOfferView(LoginRequiredMixin, View):
@@ -248,10 +290,17 @@ class NotificationDetailView(View):
         return render(request, 'user-notifications.html', context=context)
 
 
+class NotificationDeleteView(View):
+    def get(self, request, notification_id):
+        notification = m.Notification.objects.get(pk=notification_id)
+        notification.delete()
+        return redirect('user-notifications')
+
+
 class UserDeliveryOffer(View):
     def get(self, request):
 
-        delivery_offers = m.DeliveryOffer.objects.all().filter(Q(owner=request.user) | Q(contractor=request.user), is_active=0)
+        delivery_offers = m.DeliveryOffer.objects.all().filter(Q(owner=request.user) | Q(contractor=request.user), Q(is_active=1) | Q(is_active=0))
 
         context = {'delivery_offers': delivery_offers}
         return render(request, 'user-delivery-offers.html', context=context)
