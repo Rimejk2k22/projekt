@@ -325,5 +325,3 @@ class UserSendMessageView(View):
         m.Message.objects.create(content=content, delivery_offer=delivery_offer, message_from=request.user, message_to=user)
 
         return redirect('user-send-message', delivery_id=delivery_offer.pk)
-
-
