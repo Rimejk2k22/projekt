@@ -1,36 +1,54 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
+{% extends '__base__.html' %}
 
-    {% if not request.user.is_authenticated %}
-    <header>
-        <h2>Zaloguj</h2>
-    </header>
+{% block content %}
 
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    {% include 'navbar_component.html' %}
 
-    <form method="POST" action="">
-        {% csrf_token %}
+    <section class="login">
+        
+        <div class="login-box">
+          <a href="{{ request.META.HTTP_REFERER }}">
+          <i class="fa-solid fa-arrow-left-long"></i>
+          </a>
+          <h2>Logowanie</h2>
+            <form method="POST" action="">
+                {% csrf_token %}
 
-        <input type="text" name="username" placeholder="Login">
-        <input type="password" name="password" placeholder="Haslo">
-        <input type="submit" value="Zaloguj">
+                <div class="user-box">
+                  <input type="text" name="username" required="">
+                  <label>Użytkownik</label>
+                </div>
 
-    </form>
-    <button><a href="/">Wroc</a></button>
-    {% endif %}
-</body>
-</html>
+                <div class="user-box">
+                  <input type="password" name="password" required="">
+                  <label>Hasło</label>
+                </div>
+
+                <div class="user-box-submit">
+                  <button type="submit">
+                    <span></span>
+                    Zaloguj
+                  </button>
+                </div>
+            
+              <div class="no-account-register">
+                <p>Nie masz konta?</p>
+                <p><a href="{% url 'register' %}">Zarejestruj się</a></p>
+              </div>
+
+                {% if messages %}
+                <ul class="login-error">
+                    {% for message in messages %}
+                    <div>
+                        <i class="fa-solid fa-square-xmark"></i>
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    </div>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+            </form>
+        </div>
+    </section>
+
+{% endblock %}

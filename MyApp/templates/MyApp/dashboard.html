@@ -1,0 +1,22 @@
+{% extends 'MyApp/__base__.html' %}
+{% block content %}
+
+    <section>
+
+        <!-- MAIN CONTAINER -->
+        <div class="main-container">
+
+            <!-- NOTIFICATIONS -->
+            {% include 'MyApp/notification_component.html' %}
+
+            <!-- DELIVERY OFFERS -->
+            {% include 'MyApp/dashboard_delivery_offers_component.html' %}
+
+            <!-- RECENT DELIVERY OFFERS -->
+            {% include 'MyApp/recent_added_offers_component.html' %}
+
+        </div>
+    </section>
+
+
+{% endblock %}

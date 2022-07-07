@@ -1,0 +1,80 @@
+{% extends '__base__.html' %}
+{% load static %}
+
+{% block content %}
+
+    {% include 'navbar_component.html' %}
+
+    <header class="header">
+
+        <div class="container">
+
+            <div>
+                <h1>Potrzebujesz szybko coś przewieść?</h1>
+                <p>
+                    Wystaw swoje zlecienie już dziś! Dołącz do lokalnej społeczności <strong>BoxMe.</strong> i pomagajcie sobie nawzajem.
+                </p>
+                <div class="search-for-offers">
+                    <a href="{% url 'dashboard' %}" class="no-style-a"><p>Przeglądaj oferty</p></a>
+                </div>
+            </div>
+
+            <div>
+                <img src="{% static 'images/content.png' %}" alt="" />
+            </div>
+        </div>
+
+    </header>
+
+    <section class="boxes-top">
+
+        <div class="container">
+
+            <div class="box" id="box-large">
+                <div>
+                    <h2><i class="fa-solid fa-users-rays"></i>Dołącz do społeczności</h2>
+                    <p>
+                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Error minus distinctio doloremque laboriosam porro itaque dolore rem.
+                    </p>
+                </div>
+                <div class="persons-background">
+                </div>
+
+            </div>
+            <div class="box" id="box-small">
+                <h2><i class="fa-solid fa-truck-fast"></i>Szybkość</h2>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quod, magnam?
+                </p>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="boxes-bottom">
+
+        <div class="container">
+
+            <div class="box" id="box-small-adjust">
+                <h2><i class="fa-regular fa-comments"></i>Łatwa komunikacja</h2>
+
+                <p>
+                   Niezwłocznie po zakończonej licytacji masz możliwość kontaktowania się z przyszłym zleceniobiorcą.
+                </p>
+            </div>
+
+            <div class="box" id="box-large">
+                <div>
+                    <h2><i class="fa-solid fa-tree"></i>Dbaj o środowisko!</h2>
+                    <p>
+                       Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo at a atque laborum facilis sed doloribus quae aperiam veritatis explicabo ullam.
+                    </p>
+                </div>
+                    <div class="tree-background">
+                    </div>
+                </div>
+        </div>
+
+    </section>
+
+{% endblock %}

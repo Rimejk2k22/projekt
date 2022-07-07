@@ -1,0 +1,113 @@
+{% extends 'MyApp/__base__.html' %}
+{% block content %}
+{% load to_float_filter %}
+
+    <div class="modify-offer-container">
+
+
+        <div class="content">
+                        
+            <div class="add-offer-box">
+                <a href="{% url 'delivery-offer-detail' delivery_offer.pk %}">
+                    <i class="fa-solid fa-arrow-left-long"></i>
+                </a>
+
+                <h2>Modyfikuj zlecenie</h2>
+                    <form method="POST" action="">
+                        {% csrf_token %}
+
+                        <div class="user-box">
+                            <input type="text" name="name" required="" value="{{ delivery_offer.name }}">
+                            <label>Nazwa</label>
+                        </div>
+
+                        <div class="user-box">
+                            <input type="text" name="description" value="{{ delivery_offer.description }}">
+                            <label>Opis</label>
+                        </div>
+
+                        <div class="user-box">
+                            <input type="number" step="0.01" name="wage" required="" value="{{ delivery_offer.wage|to_float }}">
+                            <label>Cena</label>
+
+                        </div>
+
+                        <div class="user-box">
+                            <input type="number" step="0.001" name="distance" required="" value="{{ delivery_offer.distance }}">
+                            <label>Dystans</label>
+                        </div>
+                        
+                        <h2>Miejsce Załadunku</h2>
+
+                        <div class="user-box">
+                            <input type="text" name="city_from" required="" value="{{ delivery_offer.delivery_info.city_from }}">
+                            <label>Miasto</label>
+                        </div>
+
+                        <div class="user-box">
+                            <input type="text" name="street_from" required="" value="{{ delivery_offer.delivery_info.street_from }}">
+                            <label>Ulica</label>
+                        </div>
+
+                        <div class="user-box">
+                            <input type="text" name="street_from_number" required="" value="{{ delivery_offer.delivery_info.street_from_number }}">
+                            <label>Numer Budynku</label>
+                        </div>
+                        
+                        <h2>Miejsce Docelowe</h2>
+
+                        <div class="user-box">
+                            <input type="text" name="city_to" required="" value="{{ delivery_offer.delivery_info.city_to }}">
+                            <label>Miasto</label>
+                        </div>
+                        <div class="user-box">
+                            <input type="text" name="street_to" required="" value="{{ delivery_offer.delivery_info.street_to }}">
+                            <label>Ulica</label>
+                        </div>
+                        <div class="user-box">
+                            <input type="text" name="street_to_number" required="" value="{{ delivery_offer.delivery_info.street_to_number }}">
+                            <label>Numer Budynku</label>
+                        </div>
+
+                        <div class="user-box">
+                            <textarea name="extras" placeholder="Podaj wg. Ciebie istotne informacje.">{{ delivery_offer.delivery_info.extras }}</textarea>
+                            <label>Dodatkowe informacje</label>
+                        </div>
+
+                        <div class="user-box-submit">
+                            <button type="submit">
+                                <span></span>
+                                Zapisz
+                            </button>
+                        </div>
+
+                    
+
+                        <ul class="register-error">
+                            <div>
+                                <i class="fa-solid fa-square-xmark"></i>
+                                <li>Error</li>
+                            </div>
+                            <div>
+                                <i class="fa-solid fa-square-xmark"></i>
+                                <li>Error</li>
+                            </div>
+                            <div>
+                                <i class="fa-solid fa-square-xmark"></i>
+                                <li>Error</li>
+                            </div>
+                            <div>
+                                <i class="fa-solid fa-square-xmark"></i>
+                                <li>Error</li>
+                            </div>
+                        </ul>
+
+                    </form>
+                    
+                </div>
+            
+            </div>
+
+        </div>
+
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'MyApp/__base__.html' %}
+{% block content %}
+
+    <section>
+        <div class="main-container main-container-constrain">
+
+            <div class="content">
+                <div class="content-header">
+
+                    <a href="{% url 'dashboard' %}" class="shadow">
+                    <div class="content-left">
+                        
+                        <i class="fa-solid fa-arrow-left-long"></i>
+                        <span>Wróć</span>
+                        
+                    </div>
+                    </a>
+
+                    <div class="content-right shadow">
+
+                        <div>
+                            <span>Twoje zlecenia</span>
+                            <i class="fa-solid fa-arrow-turn-down"></i>
+                        </div>
+
+                        <div>
+                            <i class="fa-solid fa-cubes-stacked"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {% if delivery_offers %}
+                    {% for delivery_offer in delivery_offers %}
+
+                        <div class="content-section shadow">
+                            <div class="offer-title">
+                                <div class="offer-title-img">
+                                </div>
+                                <div>{{ delivery_offer.name }}</div>
+                            </div>
+                            <div class="offer-description">
+                                 {{ delivery_offer.description }}
+                            </div>
+                            <div class="offer-detail">
+
+                                <div>
+                                    <i class="fa-solid fa-person"></i>
+                                    <span>{{ delivery_offer.owner.username }}</span>
+                                </div>
+
+                                <div>
+                                    <i class="fa-solid fa-road"></i>
+                                    <span>{{ delivery_offer.distance }} Km</span>
+                                </div>
+
+                                <div>
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <span>{{ delivery_offer.delivery_info.city_from }}</span>
+                                </div>
+
+                                <div>
+                                    <i class="fa-solid fa-wallet"></i>
+                                    <span>{{ delivery_offer.wage }} zł</span>
+                                </div>
+
+                                <div>
+                                    <a href="{% url 'delivery-offer-detail' delivery_offer.pk %}">Zobacz Zlecenie</a>
+                                </div>
+
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                {% else %}
+                    <div class="content-section shadow">
+                            <div class="offer-title">
+                                <div>Brak Zleceń!</div>
+                            </div>
+                    </div>
+                {% endif %}
+
+            </div>
+
+        </div>
+    </section>
+
+{% endblock %}

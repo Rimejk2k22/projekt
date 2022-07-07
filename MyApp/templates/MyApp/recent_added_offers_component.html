@@ -1,0 +1,50 @@
+<div class="recent shadow">
+    <p>Ostatnio Dodane</p>
+
+    {% if recent_added %}
+
+            {% for offer in recent_added %}
+                    {% if offer.is_active %}
+                        <div class="recent-offer">
+                            <div>
+                                <i class="fa-solid fa-dolly"></i>
+                                <span>{{ offer.name }}</span>
+                            </div>
+                            <div>
+                                <i class="fa-solid fa-person"></i>
+                                <span>{{ offer.owner.username }}</span>
+                            </div>
+
+                            <div>
+                                <i class="fa-solid fa-road"></i>
+                                <span>{{ offer.distance }} Km</span>
+                            </div>
+
+                            <div>
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>{{ offer.delivery_info.city_from }}</span>
+                            </div>
+
+                            <div>
+                                <i class="fa-solid fa-wallet"></i>
+                                <span>{{ offer.wage }} zł</span>
+                            </div>
+
+                            <div>
+                                <a href="{% url 'delivery-offer-detail' offer.pk %}">Szczegóły</a>
+                            </div>
+
+                        </div>
+                    {% endif %}
+            {% endfor %}
+
+
+    {% else %}
+        <div class="recent-offer">
+                <div>
+                    <i class="fa-solid fa-dolly"></i>
+                    <span>Brak Offert!</span>
+                </div>
+        </div>
+    {% endif %}
+</div>

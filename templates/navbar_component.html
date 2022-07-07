@@ -1,0 +1,31 @@
+{% load static %}
+<nav class="navbar">
+    <div class="container">
+        <a href="/">
+            <div class="logo">
+                <img src="{% static 'images/logo.svg' %}" alt="">
+                <div id="BoxMe" class="no-style-a">BoxMe.</div>
+            </div>
+        </a>
+
+        <ul class="nav">
+
+            {% if not request.user.is_authenticated %}
+
+            <li>
+                <a href="{% url 'register' %}">Zarejestruj</a>
+            </li>
+
+            <li>
+                <a href="{% url 'login' %}">Zaloguj</a>
+
+            </li>
+
+            {% else %}
+            <li>
+                <a href="{% url 'dashboard' %}">Oferty</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

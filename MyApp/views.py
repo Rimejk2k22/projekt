@@ -17,14 +17,25 @@ import MyApp.validators.password_equal_validator as pev
 
 class IndexView(View):
     def get(self, request):
-        return render(request, 'index.html')
+        return render(request, 'landing_page.html')
 
 
 class DashboardView(View):
     def get(self, request):
         all_delivery_offers = m.DeliveryOffer.objects.all()
-        context = {'all_delivery_offers': all_delivery_offers}
-        return render(request, 'dashboard.html', context=context)
+        recent_added = all_delivery_offers.filter(is_active=1)[:3]
+
+        # Search bar query filtering.
+        query = request.GET.get('search')
+        if query or request.COOKIES.get('search'):
+            query = query if query else request.COOKIES.get('search')
+            all_delivery_offers = m.DeliveryOffer.filter_searchbar_query(query)
+
+        context = {
+            'all_delivery_offers': all_delivery_offers,
+            'recent_added': recent_added
+        }
+        return render(request, 'MyApp/dashboard.html', context=context)
 
 
 class LoginView(View):
@@ -49,7 +60,9 @@ class LoginView(View):
             return redirect('dashboard')
 
         else:
-            messages.add_message(request, messages.ERROR, 'Niepoprawny Login lub haslo.')
+            messages.add_message(request,
+                                 messages.ERROR,
+                                 'Niepoprawny Login lub haslo.')
             return redirect('login')
 
 
@@ -79,19 +92,26 @@ class RegisterView(View):
         errors = []
         try:
             # Validate password.
-            pv.validate_password(password=password, password_validators=all_password_validators)
+            pv.validate_password(password=password,
+                                 password_validators=all_password_validators)
         except ValidationError as password_errors:
             errors.extend(password_errors)
 
         try:
             # Validate password similarity.
-            pev.PasswordEqualValidator.validate(password=password, password2=password2)
+            pev.PasswordEqualValidator.validate(password=password,
+                                                password2=password2)
         except ValidationError as password_equal_error:
             errors.extend(password_equal_error)
 
         try:
             # Validate login and email.
-            elv.validate_login_email(username=username, email=email, login_email_validators=all_login_email_validators)
+            elv.validate_login_email(
+                username=username,
+                email=email,
+                login_email_validators=all_login_email_validators
+            )
+
         except ValidationError as login_username_errors:
             errors.extend(login_username_errors)
 
@@ -101,9 +121,11 @@ class RegisterView(View):
                 messages.add_message(request, messages.ERROR, error)
             return redirect('register')
 
-
         # User Instance.
-        user = m.User.objects.create_user(email=email, username=username, password=password)
+        user = m.User.objects.create_user(email=email,
+                                          username=username,
+                                          password=password
+                                          )
 
         # After Successful User creation, automatically login.
         login(request, user)
@@ -121,7 +143,14 @@ class CreateDeliveryOfferView(LoginRequiredMixin, View):
     login_url = '{}?next={}'.format(settings.LOGIN_URL, 'delivery-offer-add')
 
     def get(self, request):
-        return render(request, 'delivery-offer-add.html')
+
+        # If user passed phrase into search bar, filter delivery offers.
+        if query := request.GET.get('search'):
+            return m.DeliveryOffer.set_search_cookie_redirect(query)
+
+        recent_added = m.DeliveryOffer.objects.all()[:3]
+        context = {'recent_added': recent_added}
+        return render(request, 'MyApp/delivery-offer-add.html', context=context)
 
     def post(self, request):
         data = request.POST
@@ -168,6 +197,11 @@ class CreateDeliveryOfferView(LoginRequiredMixin, View):
 
 class DeliveryOfferDetailView(View):
     def get(self, request, delivery_id):
+
+        # If user passed phrase into search bar, filter delivery offers.
+        if query := request.GET.get('search'):
+            return m.DeliveryOffer.set_search_cookie_redirect(query)
+
         delivery_offer = m.DeliveryOffer.objects.get(pk=delivery_id)
         bids = delivery_offer.userbid_set.all()
 
@@ -175,7 +209,9 @@ class DeliveryOfferDetailView(View):
             'delivery_offer': delivery_offer,
             'bids': bids
         }
-        return render(request, 'delivery-offer-detail.html', context=context)
+        return render(request,
+                      'MyApp/delivery-offer-detail.html',
+                      context=context)
 
     def post(self, request, delivery_id):
         data = request.POST
@@ -203,6 +239,11 @@ class DeliveryOfferModifyView(LoginRequiredMixin, View):
     login_url = '{}?next={}'.format(settings.LOGIN_URL, 'delivery-offer-modify')
 
     def get(self, request, delivery_id):
+
+        # If user passed phrase into search bar, filter delivery offers.
+        if query := request.GET.get('search'):
+            return m.DeliveryOffer.set_search_cookie_redirect(query)
+
         delivery_offer = m.DeliveryOffer.objects.get(pk=delivery_id)
         context = {'delivery_offer': delivery_offer}
 
@@ -214,7 +255,9 @@ class DeliveryOfferModifyView(LoginRequiredMixin, View):
         if request.user != delivery_offer.owner:
             return HttpResponse('Nie masz uprawnien.')
 
-        return render(request, 'delivery-offer-modify.html', context=context)
+        return render(request,
+                      'MyApp/delivery-offer-modify.html',
+                      context=context)
 
     def post(self, request, delivery_id):
         data = request.POST
@@ -269,10 +312,6 @@ class DeliveryOfferDeleteView(LoginRequiredMixin, View):
     def get(self, request, delivery_id):
         delivery_offer = m.DeliveryOffer.objects.get(pk=delivery_id)
 
-        # Do not allow to edit proceeded offer.
-        if not delivery_offer.is_active:
-            return redirect('dashboard')
-
         # You are not owner, denied.
         if request.user != delivery_offer.owner:
             return HttpResponse('Nie masz uprawnien.')
@@ -287,41 +326,63 @@ class NotificationDetailView(View):
     def get(self, request):
         user = request.user
         context = {'user': user}
-        return render(request, 'user-notifications.html', context=context)
+        return render(request, 'MyApp/user-notifications.html', context=context)
 
 
 class NotificationDeleteView(View):
     def get(self, request, notification_id):
         notification = m.Notification.objects.get(pk=notification_id)
         notification.delete()
-        return redirect('user-notifications')
+        return redirect('dashboard')
 
 
 class UserDeliveryOffer(View):
     def get(self, request):
 
-        delivery_offers = m.DeliveryOffer.objects.all().filter(Q(owner=request.user) | Q(contractor=request.user), Q(is_active=1) | Q(is_active=0))
+        # If user passed phrase into search bar, filter delivery offers.
+        if query := request.GET.get('search'):
+            return m.DeliveryOffer.set_search_cookie_redirect(query)
+
+        delivery_offers = m.DeliveryOffer.objects.all().filter(
+            Q(owner=request.user) | Q(contractor=request.user),
+            Q(is_active=1) | Q(is_active=0)
+        )
 
         context = {'delivery_offers': delivery_offers}
-        return render(request, 'user-delivery-offers.html', context=context)
+        return render(request,
+                      'MyApp/user-delivery-offers.html',
+                      context=context
+                      )
 
 
 class UserSendMessageView(View):
     def get(self, request, delivery_id):
+
+        # If user passed phrase into search bar, filter delivery offers.
+        if query := request.GET.get('search'):
+            return m.DeliveryOffer.set_search_cookie_redirect(query)
+
         delivery_offer = m.DeliveryOffer.objects.get(pk=delivery_id)
 
         if request.user != delivery_offer.owner and request.user != delivery_offer.contractor:
             return HttpResponse('<h2>Not allowed</h2>')
 
-        context = {'delivery_offer': delivery_offer}
-        return render(request, 'user-send-message.html', context=context)
+        all_messages = delivery_offer.message_set.all().order_by('-date')
+        context = {'all_messages': all_messages}
+        return render(request, 'MyApp/user-send-message.html', context=context)
 
     def post(self, request, delivery_id):
         delivery_offer = m.DeliveryOffer.objects.get(pk=delivery_id)
-        user = delivery_offer.owner if request.user != delivery_offer.owner else delivery_offer.contractor
+
+        user = (
+            delivery_offer.owner if request.user != delivery_offer.owner else
+            delivery_offer.contractor
+        )
 
         content = request.POST.get('content')
-
-        m.Message.objects.create(content=content, delivery_offer=delivery_offer, message_from=request.user, message_to=user)
+        m.Message.objects.create(content=content,
+                                 delivery_offer=delivery_offer,
+                                 message_from=request.user,
+                                 message_to=user)
 
         return redirect('user-send-message', delivery_id=delivery_offer.pk)

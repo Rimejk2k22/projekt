@@ -1,0 +1,45 @@
+{% extends 'MyApp/__base__.html' %}
+{% block content %}
+
+    <section>
+        <div class="messages-container shadow">
+            <div class="message-header">
+                <div>
+                    <a href="{% url 'user-delivery-offers' %}">
+                    <i class="fa-solid fa-arrow-left-long"></i>
+                    </a>
+                </div>
+                <div>
+                    <i class="fa-solid fa-comments"></i>
+                    Chat
+                </div>
+                <div>
+
+                </div>
+            </div>
+
+            <div class="message-content">
+                {% for message in all_messages %}
+                    <div class="user-message">
+                        <div class="user-message-top">
+                            <span>{{ message.message_from }}</span><small>{{ message.date|timesince }} temu</small>
+                        </div>
+                        <div class="user-message-bottom">
+                            {{ message.content }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="send-message-content">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <input type="text" name="content">
+                </form>
+            </div>
+
+        </div>
+
+    </section>
+
+{% endblock %}

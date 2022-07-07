@@ -1,41 +1,61 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
+{% extends '__base__.html' %}
+{% block content %}
+    {% include 'navbar_component.html' %}
 
+    <section class="register">
+        
+        <div class="register-box">
 
-    <header>
-        <h2>Zarejestruj</h2>
-    </header>
+        <a href="{{ request.META.HTTP_REFERER }}">
+            <i class="fa-solid fa-arrow-left-long"></i>
+        </a>
+        
+        <h2>Rejestracja</h2>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="user-box">
+                    <input type="email" name="email" required="">
+                    <label>E-mail</label>
+                </div>
 
-    <form method="POST" action="">
-        {% csrf_token %}
+                <div class="user-box">
+                <input type="text" name="username" required="">
+                <label>Użytkownik</label>
+                </div>
 
-        <input type="email" name="email" placeholder="Email">
-        <input type="text" name="username" placeholder="Login">
-        <input type="password" name="password" placeholder="Haslo">
-        <input type="password" name="password2" placeholder="Powtorz haslo">
-        <input type="submit" value="Zarejestruj">
+                <div class="user-box">
+                <input type="password" name="password" required="">
+                <label>Hasło</label>
+                </div>
 
-    </form>
+                <div class="user-box">
+                    <input type="password" name="password2" required="">
+                    <label>Powtórz Hasło</label>
+                </div>
 
-    <button><a href="/">Wroc</a></button>
+                <div class="user-box-submit">
+                    <button type="submit">
+                        <span></span>
+                        Zarejestruj
+                    </button>
+                </div>
 
+            <div class="account-login">
+                <p>Masz już konto?</p>
+                <p><a href="{% url 'login' %}">Zaloguj się</a></p>
+            </div>
 
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-
-</body>
-</html>
+            {% if messages %}
+                <ul class="register-error">
+                    {% for message in messages %}
+                    <div>
+                        <i class="fa-solid fa-square-xmark"></i>
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    </div>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            </form>
+        </div>
+    </section>
+{% endblock %}

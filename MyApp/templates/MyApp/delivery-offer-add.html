@@ -1,0 +1,116 @@
+{% extends 'MyApp/__base__.html' %}
+{% block content %}
+
+    <section>
+        <div class="main-container">
+
+            <!-- NOTIFICATIONS -->
+            {% include 'MyApp/notification_component.html' %}
+
+            <div class="content">
+                
+                <div class="add-offer-box">
+                    <a href="{% url 'dashboard' %}">
+                        <i class="fa-solid fa-arrow-left-long"></i>
+                    </a>
+                    <h2>Dodaj zlecenie</h2>
+
+
+                        <form method="POST" action="">
+                            {% csrf_token %}
+                            <div class="user-box">
+                                <input type="text" name="name" required="">
+                                <label>Nazwa</label>
+                            </div>
+            
+                            <div class="user-box">
+                                <input type="text" name="description" >
+                                <label>Opis</label>
+                            </div>
+                            <div class="user-box">
+                                <input type="number" step="0.01" name="wage" required="">
+                                <label>Cena</label>
+                            </div>
+            
+                            <div class="user-box">
+                                <input type="number" step="0.001" name="distance" required="">
+                                <label>Dystans</label>
+                            </div>
+                            
+                            <h2>Miejsce Załadunku</h2>
+
+                            <div class="user-box">
+                                <input type="text" name="city_from" required="">
+                                <label>Miasto</label>
+                            </div>
+                            <div class="user-box">
+                                <input type="text" name="street_from" required="">
+                                <label>Ulica</label>
+                            </div>
+                            <div class="user-box">
+                                <input type="text" name="street_from_number" required="">
+                                <label>Numer Budynku</label>
+                            </div>
+                            
+                            <h2>Miejsce Docelowe</h2>
+
+                            <div class="user-box">
+                                <input type="text" name="city_to" required="">
+                                <label>Miasto</label>
+                            </div>
+                            <div class="user-box">
+                                <input type="text" name="street_to" required="">
+                                <label>Ulica</label>
+                            </div>
+                            <div class="user-box">
+                                <input type="text" name="street_to_number" required="">
+                                <label>Numer Budynku</label>
+                            </div>
+
+                            <div class="user-box">
+                                <textarea name="extras" placeholder="Podaj wg. Ciebie istotne informacje."></textarea>
+                                <label>Dodatkowe informacje</label>
+                            </div>
+            
+                            <div class="user-box-submit">
+                                <button type="submit">
+                                    <span></span>
+                                    Dodaj
+                                </button>
+                            </div>
+            
+                        
+            
+                        <ul class="register-error">
+                            <div>
+                                <i class="fa-solid fa-square-xmark"></i>
+                                <li>Error</li>
+                            </div>
+                            <div>
+                                <i class="fa-solid fa-square-xmark"></i>
+                                <li>Error</li>
+                            </div>
+                            <div>
+                                <i class="fa-solid fa-square-xmark"></i>
+                                <li>Error</li>
+                            </div>
+                            <div>
+                                <i class="fa-solid fa-square-xmark"></i>
+                                <li>Error</li>
+                            </div>
+                        </ul>
+            
+                        </form>
+                        
+                    </div>
+
+            </div>
+
+            <!-- RECENT ADDED OFFERS -->
+            {% include 'MyApp/recent_added_offers_component.html' %}
+
+
+        </div>
+    </section>
+
+{% endblock %}

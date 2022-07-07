@@ -1,0 +1,51 @@
+{% load static %}
+
+<nav class="navbar">
+        <div class="container">
+            <a href="{% url 'dashboard' %}">
+                <div class="logo">
+                    <img src="{% static 'images/logo.svg' %}" alt="">
+                    <div id="BoxMe" class="no-style-a">BoxMe.</div>
+                </div>
+            </a>
+
+
+                <div class="navbar-search">
+                    <form action="">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" name="search" placeholder="Szukaj...">
+
+                    </form>
+                </div>
+
+            <ul class="nav">
+                {% if request.user.is_authenticated %}
+
+                <li>
+                    <a href="{% url 'user-delivery-offers' %}">Zlecenia</a>
+                </li>
+
+                <li>
+                    <a href="{% url 'user-profile' %}">Profil</a>
+                </li>
+
+                <li>
+                    <a href="{% url 'logout' %}">Wyloguj</a>
+                </li>
+
+                {% else %}
+
+                <li>
+                    <a href="{% url 'register' %}">Zarejestruj</a>
+                </li>
+
+                <li>
+                    <a href="{% url 'login' %}">Zaloguj</a>
+
+                </li>
+
+                {% endif %}
+            </ul>
+        </div>
+    </nav>

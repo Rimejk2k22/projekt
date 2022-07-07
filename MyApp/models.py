@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models import Q
+from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy
 
 # Create your models here.
@@ -38,13 +40,39 @@ class DeliveryOffer(models.Model):
     wage = models.DecimalField(max_digits=256, decimal_places=2)
     distance = models.DecimalField(max_digits=32, decimal_places=3)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    contractor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="contractor", null=True, blank=True)
-    delivery_info = models.OneToOneField(DeliveryInfo, on_delete=models.CASCADE, null=True, blank=True)
-    is_active = models.IntegerField(default=1, choices=IsActive.choices)
-    final_bid = models.DecimalField(max_digits=256, decimal_places=2, default=0, null=True, blank=True)
 
-    def __str__(self):
-        return self.name
+    contractor = models.ForeignKey(User,
+                                   on_delete=models.CASCADE,
+                                   related_name="contractor",
+                                   null=True,
+                                   blank=True
+                                   )
+
+    delivery_info = models.OneToOneField(DeliveryInfo, on_delete=models.CASCADE)
+    is_active = models.IntegerField(default=1, choices=IsActive.choices)
+
+    final_bid = models.DecimalField(
+        max_digits=256,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True
+    )
+
+    @classmethod
+    def filter_searchbar_query(cls, query):
+        return cls.objects.all().filter(
+            Q(name__icontains=query) |
+            Q(owner__username__icontains=query) |
+            Q(delivery_info__city_from__icontains=query) |
+            Q(delivery_info__city_to__icontains=query)
+        )
+
+    @classmethod
+    def set_search_cookie_redirect(cls, query):
+        http_request = redirect('dashboard')
+        http_request.set_cookie('search', query, max_age=1)
+        return http_request
 
     def get_instance_update(self, **kwargs):
         for attr in self.__dict__:
@@ -59,14 +87,14 @@ class DeliveryOffer(models.Model):
              update_fields=None
              ):
         if not self.is_active:
-            msg_contractor = f"Twoja oferta zostala zaakceptowana przez {self.owner.username}."
+            msg_contractor = f"'@{self.name}' Twoja oferta zostala zaakceptowana przez {self.owner.username}."
             Notification.objects.create(
                 delivery_offer=self,
                 user=self.contractor,
                 title=msg_contractor
             )
 
-            msg_owner = f"Zaakceptowales oferte uzytkownika {self.contractor.username} ({self.final_bid})."
+            msg_owner = f"'@{self.name}' Zaakceptowales oferte uzytkownika {self.contractor.username} ({self.final_bid} zł)."
             Notification.objects.create(
                 delivery_offer=self,
                 user=self.owner,
@@ -80,8 +108,20 @@ class UserBid(models.Model):
     value = models.DecimalField(max_digits=256, decimal_places=2)
     delivery_offer = models.ForeignKey(DeliveryOffer, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.delivery_offer.name
+    def save(self,
+             force_insert=False,
+             force_update=False,
+             using=None,
+             update_fields=None
+             ):
+
+        msg_owner = f'"@{self.delivery_offer.name}" Użytkownik {self.owner.username} złożył ofertę ({self.value} zł).'
+        Notification.objects.create(
+            delivery_offer=self.delivery_offer,
+            user=self.delivery_offer.owner,
+            title=msg_owner
+        )
+        super().save()
 
 
 class Notification(models.Model):
@@ -96,15 +136,3 @@ class Message(models.Model):
     message_from = models.ForeignKey(User, on_delete=models.CASCADE, related_name="message_from")
     message_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name="message_to")
     date = models.DateTimeField(auto_now_add=True)
-
-
-# class Room(models.Model):
-#     name = models.CharField(max_length=128)
-#     description = models.TextField(null=True, blank=True)
-#     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-#     participants = models.ManyToManyField(User, related_name="participants", blank=True)
-#     delivery_offer = models.ManyToManyField(DeliveryOffer)
-#
-#     def __str__(self):
-#         return self.name
-
