@@ -11,6 +11,8 @@ from django.views import View
 from MyApp import models as m
 import MyApp.validators.email_login_validation as elv
 import MyApp.validators.password_equal_validator as pev
+import MyApp.validators.delivery_offer_validator as dov
+import MyApp.validators.user_bid_validator as ubv
 
 
 # Create your views here.
@@ -22,7 +24,7 @@ class IndexView(View):
 
 class DashboardView(View):
     def get(self, request):
-        all_delivery_offers = m.DeliveryOffer.objects.all()
+        all_delivery_offers = m.DeliveryOffer.objects.all().order_by('-date_added')
         recent_added = all_delivery_offers.filter(is_active=1)[:3]
 
         # Search bar query filtering.
@@ -171,6 +173,12 @@ class CreateDeliveryOfferView(LoginRequiredMixin, View):
         street_to_number = data.get('street_to_number')
         extras = data.get('extras')
 
+        # Validate Fields.
+        if errors := dov.DeliveryOfferValidator.validate(dict(data)):
+            for error in errors:
+                messages.add_message(request, messages.ERROR, error)
+                return redirect('delivery-offer-add')
+
         # Create DeliveryInfo Instance.
         delivery_info = m.DeliveryInfo(
             city_from=city_from,
@@ -227,6 +235,13 @@ class DeliveryOfferDetailView(View):
             return redirect('user-delivery-offers')
 
         bid = data.get('bid')
+        # Validate User bid.
+        if errors := ubv.UserBidValidator.validate(bid):
+            for error in errors:
+                messages.add_message(request, messages.ERROR, error)
+                return redirect(
+                    'delivery-offer-detail', delivery_id=delivery_offer.pk)
+
         m.UserBid.objects.create(
             owner=request.user,
             value=bid,
@@ -253,7 +268,7 @@ class DeliveryOfferModifyView(LoginRequiredMixin, View):
 
         # You are not owner, denied.
         if request.user != delivery_offer.owner:
-            return HttpResponse('Nie masz uprawnien.')
+            return redirect('http_405')
 
         return render(request,
                       'MyApp/delivery-offer-modify.html',
@@ -266,7 +281,7 @@ class DeliveryOfferModifyView(LoginRequiredMixin, View):
 
         # You are not owner, denied.
         if request.user != delivery_offer.owner:
-            return HttpResponse('Nie masz uprawnien.')
+            return redirect('http_405')
 
         name = data.get('name')
         description = data.get('description')
@@ -283,6 +298,13 @@ class DeliveryOfferModifyView(LoginRequiredMixin, View):
         street_to = data.get('street_to')
         street_to_number = data.get('street_to_number')
         extras = data.get('extras')
+
+        # Validate Fields.
+        if errors := dov.DeliveryOfferValidator.validate(dict(data)):
+            for error in errors:
+                messages.add_message(request, messages.ERROR, error)
+                return redirect(
+                    'delivery-offer-modify', delivery_id=delivery_offer.pk)
 
         # Update DeliveryInfo Instance.
         delivery_info.get_instance_update(
@@ -314,7 +336,7 @@ class DeliveryOfferDeleteView(LoginRequiredMixin, View):
 
         # You are not owner, denied.
         if request.user != delivery_offer.owner:
-            return HttpResponse('Nie masz uprawnien.')
+            return redirect('http_405')
 
         delivery_info = delivery_offer.delivery_info
         delivery_offer.delete()
@@ -322,16 +344,13 @@ class DeliveryOfferDeleteView(LoginRequiredMixin, View):
         return redirect('dashboard')
 
 
-class NotificationDetailView(View):
-    def get(self, request):
-        user = request.user
-        context = {'user': user}
-        return render(request, 'MyApp/user-notifications.html', context=context)
-
-
 class NotificationDeleteView(View):
     def get(self, request, notification_id):
         notification = m.Notification.objects.get(pk=notification_id)
+
+        if notification.user != request.user:
+            return redirect('http_405')
+
         notification.delete()
         return redirect('dashboard')
 
@@ -346,7 +365,7 @@ class UserDeliveryOffer(View):
         delivery_offers = m.DeliveryOffer.objects.all().filter(
             Q(owner=request.user) | Q(contractor=request.user),
             Q(is_active=1) | Q(is_active=0)
-        )
+        ).order_by('-date_added')
 
         context = {'delivery_offers': delivery_offers}
         return render(request,
@@ -386,3 +405,12 @@ class UserSendMessageView(View):
                                  message_to=user)
 
         return redirect('user-send-message', delivery_id=delivery_offer.pk)
+
+
+class Http405View(View):
+    def get(self, request):
+        # If user passed phrase into search bar, filter delivery offers.
+        if query := request.GET.get('search'):
+            return m.DeliveryOffer.set_search_cookie_redirect(query)
+
+        return render(request, 'MyApp/http_errors/http_405.html')

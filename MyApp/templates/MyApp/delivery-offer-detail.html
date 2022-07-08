@@ -22,7 +22,8 @@
 
                     <li>
                         <h3>Opis</h3>
-                        <span>{{ delivery_offer.description }}</span>
+
+                        <span>{% if delivery_offer.description %} {{ delivery_offer.description }} {% else %} Brak opisu. {% endif %}</span>
                     </li>
 
                     <li>
@@ -136,6 +137,16 @@
                     {% if request.user != delivery_offer.owner and delivery_offer.is_active and request.user.is_authenticated %}
 
                         <div class="make-an-offer">
+                            {% if messages %}
+                                <ul class="add-error">
+                                    {% for message in messages %}
+                                    <div class="center">
+                                        <i class="fa-solid fa-square-xmark"></i>
+                                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                    </div>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
 
                             <span>Złóż ofertę</span>
                                 <form method="POST" action="">

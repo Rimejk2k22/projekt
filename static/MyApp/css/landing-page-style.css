@@ -264,8 +264,15 @@ h2 {
     border: none;
     border-bottom: 1px solid #fff;
     outline: none;
-    background: transparent;
+    background: var(--navbar-gray);
 }
+
+.register-box .user-box input:-webkit-autofill,
+.login-box .user-box input:-webkit-autofill {
+    background-color: transparent !important;
+}
+
+
 
 .register-box .user-box label,
 .login-box .user-box label {
@@ -341,6 +348,7 @@ h2 {
     animation: btn-anim1 1s linear infinite;
 }
 
+
 .login-box ul.login-error,
 .register-box ul.register-error {
     color: var(--dominant-white-color);
@@ -374,83 +382,6 @@ h2 {
     left: 100%;
     }
 }
-
-
-/*********** DASHBOARD SECTION ***********/
-
-/* .dashboard-container {
-    max-width: 50vw;
-}
-
-.dashboard-box-left {
-    display: flex;
-    flex-direction: column;
-    background: bisque;
-    flex-grow: 3;
-}
-
-.dashboard-box-left-top {
-    display: flex;
-    background: coral;
-    flex-grow: 1;
-}
-
-.dashboard-box-left-bottom {
-    display: flex;
-    background: blanchedalmond;
-    flex-grow: 3;
-}
-
-.dashboard-profile {
-    background: var(--navbar-gray);
-    flex-grow: 1;
-    margin: 10px;
-}
-
-.dashboard-search {
-    background: var(--navbar-gray);
-    flex-grow: 3;
-    margin: 10px 10px 10px 0px;
-}
-
-.dashboard-notification {
-    background: var(--navbar-gray);
-    flex-grow: 1;
-    margin: 0px 10px 10px 10px;
-}
-
-
-.dashboard-content {
-    background: var(--navbar-gray);
-    flex-grow: 3;
-    margin: 0px 10px 10px 0px;
-}
-
-.user-offer {
-    width: 100px;
-}
-
-
-
-.dashboard-box-right {
-    flex-grow: 1;
-    background: cadetblue;
-    margin: 10px 10px 10px 0px
-} */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /******* RESPONSIVE SECTION *******/

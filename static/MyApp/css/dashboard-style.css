@@ -440,6 +440,9 @@ h2 {
     background: transparent;
 }
 
+.add-offer-box .user-box input:-webkit-autofill {
+    background-color: transparent !important;
+}
 
 .add-offer-box .user-box label {
     position: absolute;
@@ -846,6 +849,57 @@ div.message-content::-webkit-scrollbar-thumb {
 }
 
 
+/******** ADD/MODIFY OFFER FORM **********/
+
+ul.add-error {
+    color: var(--dominant-white-color);
+    margin-top: 20px;
+}
+
+ul.add-error div {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+}
+
+ul.add-error li {
+    margin-left: 10px;
+}
+
+ul.add-error i {
+    color: var(--hero-section);
+    position: relative;
+    transform: scale(150%);
+}
+
+
+/********** HTTP ERRORS **********/
+
+.error-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+div.http_405 {
+    display: flex;
+    width: 40vw;
+    height: 20vh;
+    background: var(--navbar-gray);
+    color: var(--dominant-white-color);
+    font-family: var(--main-font);
+    font-weight: 600;
+    justify-content: center;
+    margin: 5% auto;
+    border-radius: 3px;
+}
+
+div.http_405 h1 {
+    display: flex;
+    align-items: center;
+}
+
+
 /********** RESPONSIVE SECTION **********/
 
 @media(max-width: 768px) {
@@ -859,3 +913,14 @@ div.message-content::-webkit-scrollbar-thumb {
     }
 
 }
+
+
+
+/********* CUSTOM CLASSES ***********/
+.center {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+

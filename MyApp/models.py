@@ -8,7 +8,15 @@ from django.utils.translation import gettext_lazy
 
 
 class User(AbstractUser):
-    pass
+
+    def save(self, *args, **kwargs):
+        UserProfile.objects.create(user=self)
+        super().save()
+
+
+class UserProfile(models.Model):
+    avatar = models.ImageField(default='user.svg', null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 
 class DeliveryInfo(models.Model):
@@ -58,6 +66,7 @@ class DeliveryOffer(models.Model):
         null=True,
         blank=True
     )
+    date_added = models.DateTimeField(auto_now_add=True)
 
     @classmethod
     def filter_searchbar_query(cls, query):

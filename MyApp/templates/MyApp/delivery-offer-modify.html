@@ -81,26 +81,16 @@
                             </button>
                         </div>
 
-                    
-
-                        <ul class="register-error">
-                            <div>
-                                <i class="fa-solid fa-square-xmark"></i>
-                                <li>Error</li>
-                            </div>
-                            <div>
-                                <i class="fa-solid fa-square-xmark"></i>
-                                <li>Error</li>
-                            </div>
-                            <div>
-                                <i class="fa-solid fa-square-xmark"></i>
-                                <li>Error</li>
-                            </div>
-                            <div>
-                                <i class="fa-solid fa-square-xmark"></i>
-                                <li>Error</li>
-                            </div>
-                        </ul>
+                        {% if messages %}
+                            <ul class="add-error">
+                                {% for message in messages %}
+                                <div>
+                                    <i class="fa-solid fa-square-xmark"></i>
+                                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                </div>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
 
                     </form>
                     
