@@ -1,0 +1,39 @@
+{% extends 'MyApp/__base__.html' %}
+
+{% block content %}
+
+    <div class="user-profile-container">
+
+        <div class="user-profile-buttons">
+
+            <button class="shadow">
+                <a href="{% url 'user-profile-update' %}">Aktualizuj Profil</a>
+            </button>
+
+            <button class="shadow">
+                <a href="{% url 'logout' %}">Wyloguj</a>
+            </button>
+        </div>
+        <div class="user-profile-content shadow">
+
+            <a href="{% url 'dashboard' %}">
+                <i class="fa-solid fa-arrow-left-long"></i>
+            </a>
+
+            <h1>Nazwa użytkownika</h1>
+            <div>{{ user.username }}</div>
+
+            <h1>Imię</h1>
+            <div>{% if user.first_name %} {{ user.first_name }} {% else %} Nie podano {% endif %}</div>
+
+            <h1>Nazwisko</h1>
+            <div>{% if user.last_name %} {{ user.last_name }} {% else %} Nie podano {% endif %}</div>
+
+            <h1>E-mail</h1>
+            <div>{{ user.email }}</div>
+
+        </div>
+
+    </div>
+
+{% endblock %}

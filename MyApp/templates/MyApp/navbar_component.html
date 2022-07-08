@@ -26,13 +26,19 @@
                     <a href="{% url 'user-delivery-offers' %}">Zlecenia</a>
                 </li>
 
-                <li>
-                    <a href="{% url 'user-profile' %}">Profil</a>
+                <li class="user-profile">
+                    <div class="user-username">
+                        <a href="{% url 'user-profile' %}">{{ request.user.username }}</a>
+                    </div>
+
+                    <div class="user-profile-image">
+                        <img src="{{ request.user.profile.avatar.url }}" alt="">
+                    </div>
                 </li>
 
-                <li>
-                    <a href="{% url 'logout' %}">Wyloguj</a>
-                </li>
+{#                <li>#}
+{#                    <a href="{% url 'logout' %}">Wyloguj</a>#}
+{#                </li>#}
 
                 {% else %}
 

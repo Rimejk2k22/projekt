@@ -80,10 +80,19 @@ WSGI_APPLICATION = 'MyProject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'exam',
+        'USER': 'postgres',
+        'PASSWORD': 'random_pass',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
+# sqlite
+# 'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'database.sqlite3'),
+
 
 
 # Password validation
@@ -137,10 +146,15 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static/MyApp/",
+    BASE_DIR / "static/files/"
 ]
 
 # Default path for login view.
 LOGIN_URL = '/login/'
+
+# Files path.
+MEDIA_URL = '/files/'
+MEDIA_ROOT = BASE_DIR / 'static/files/'
 
 # Setting User model.
 AUTH_USER_MODEL = 'MyApp.User'

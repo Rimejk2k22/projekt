@@ -123,10 +123,14 @@ class RegisterView(View):
                 messages.add_message(request, messages.ERROR, error)
             return redirect('register')
 
+        # Create User profile.
+        user_profile = m.UserProfile.objects.create()
+
         # User Instance.
         user = m.User.objects.create_user(email=email,
                                           username=username,
-                                          password=password
+                                          password=password,
+                                          profile=user_profile,
                                           )
 
         # After Successful User creation, automatically login.
@@ -138,7 +142,49 @@ class UserProfile(View):
     def get(self, request):
         user = request.user
         context = {'user': user}
-        return render(request, 'user-profile.html', context=context)
+        return render(request, 'MyApp/user-profile.html', context=context)
+
+
+class UserProfileUpdate(LoginRequiredMixin, View):
+    login_url = '{}?next={}'.format(settings.LOGIN_URL, 'delivery-offer-modify')
+
+    def get(self, request):
+        return render(request, 'MyApp/user-profile-update.html')
+
+    def post(self, request):
+        data = request.POST
+        # Get data from form.
+        first_name = data.get('first_name')
+        last_name = data.get('last_name')
+        email = data.get('email')
+        avatar = request.FILES.get('avatar')
+
+        errors = []
+        email_exists = m.User.objects.all().filter(email=email)
+        if email_exists:
+            errors.append('Podany e-mail istnieje.')
+
+        if not email:
+            errors.append('Podaj e-mail.')
+
+        if errors:
+            for error in errors:
+                messages.add_message(request, messages.ERROR, error)
+                return redirect('user-profile-update')
+
+        # User instance.
+        user = request.user
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+
+        # User profile instance
+        user_profile = m.UserProfile.objects.all().filter(user=user).first()
+        user_profile.avatar = avatar
+
+        user_profile.save()
+        user.save()
+        return redirect('user-profile')
 
 
 class CreateDeliveryOfferView(LoginRequiredMixin, View):

@@ -388,18 +388,20 @@ h2 {
 
 /********** ADD OFFER SECTION **********/
 
+.modify-user-box,
 .add-offer-box {
     padding: 80px;
     background: var(--navbar-gray);
     box-sizing: border-box;
     box-shadow: 0 15px 25px rgba(0,0,0,.6);
 }
-
+.modify-user-box i.fa-arrow-left-long,
 .add-offer-box i.fa-arrow-left-long {
     color: var(--hero-section);
     font-size: 42px;
 }
 
+.modify-user-box h2,
 .add-offer-box h2 {
     margin: 0 0 30px;
     padding: 0;
@@ -408,6 +410,7 @@ h2 {
     font-size: 28px;
 }
 
+.modify-user-box .user-box,
 .add-offer-box .user-box {
     position: relative;
 }
@@ -428,6 +431,7 @@ h2 {
     
 }
 
+.modify-user-box .user-box input,
 .add-offer-box .user-box input {
     width: 100%;
     padding: 10px 0;
@@ -440,10 +444,12 @@ h2 {
     background: transparent;
 }
 
+.modify-user-box .user-box input:-webkit-autofill,
 .add-offer-box .user-box input:-webkit-autofill {
     background-color: transparent !important;
 }
 
+.modify-user-box .user-box label,
 .add-offer-box .user-box label {
     position: absolute;
     top:0;
@@ -455,6 +461,7 @@ h2 {
     transition: .5s;
 }
 
+.modify-user-box .user-box input ~ label,
 .add-offer-box .user-box textarea ~ label,
 .add-offer-box .user-box input ~ label {
     top: -30px;
@@ -463,6 +470,7 @@ h2 {
     font-size: 16px;
 }
 
+.modify-user-box form button,
 .add-offer-box form button {
     position: relative;
     display: inline-block;
@@ -481,11 +489,13 @@ h2 {
     width: 50%;
 }
 
+.modify-user-box form .user-box-submit,
 .add-offer-box form .user-box-submit {
     display: flex;
     justify-content: center;
 }
 
+.modify-user-box button:hover,
 .add-offer-box button:hover {
     background: var(--hero-section);
     color: #fff;
@@ -497,11 +507,13 @@ h2 {
 
 }
 
+.modify-user-box button span,
 .add-offer-box button span {
     position: absolute;
     display: block;
 }
 
+.modify-user-box button span:nth-child(1),
 .add-offer-box button span:nth-child(1) {
     top: 0;
     left: -100%;
@@ -511,21 +523,25 @@ h2 {
     animation: btn-anim1 1s linear infinite;
 }
 
+.modify-user-box ul.register-error,
 .add-offer-box ul.register-error {
     color: var(--dominant-white-color);
     margin-top: 20px;
 }
 
+.modify-user-box ul.register-error div,
 .add-offer-box ul.register-error div {
     display: flex;
     align-items: center;
     margin-top: 5px;
 }
 
+.modify-user-box ul.register-error li,
 .add-offer-box ul.register-error li {
     margin-left: 10px;
 }
 
+.modify-user-box ul.register-error i,
 .add-offer-box ul.register-error i {
     color: var(--hero-section);
     transform: scale(150%);
@@ -914,6 +930,99 @@ div.http_405 h1 {
 
 }
 
+/********* USER PROFILE *********/
+
+.user-profile-container {
+    max-width: 650px;
+    margin: 3% auto 0 auto;
+}
+
+.user-profile-buttons {
+    display: flex;
+    width: 100%;
+}
+
+.user-profile-buttons button:nth-child(1) {
+    width: 70%;
+    margin-right: 10px;
+}
+
+.user-profile-buttons button:nth-child(2) {
+    width: 30%;
+    margin-left: 10px;
+}
+
+.user-profile-buttons button {
+    height: 50px;
+    border-radius: 3px;
+    border: none;
+    background: var(--navbar-gray);
+
+}
+.user-profile-buttons button a {
+    font-weight: bold;
+    font-family: var(--main-font);
+    text-decoration: none;
+    color: var(--dominant-white-color);
+    font-size: 21px;
+}
+
+.user-profile-content {
+    width: 100%;
+    background: var(--navbar-gray);
+    margin-top: 20px;
+    border-radius: 3px;
+    padding: 20px;
+}
+
+.user-profile-content a {
+    text-decoration: none;
+    color: var(--hero-section);
+    font-size: 32px;
+}
+
+.user-profile-content h1 {
+    margin: 0;
+    z-index: 0;
+    color: var(--dominant-white-color);
+    font-family: var(--main-font);
+}
+
+.user-profile-content div {
+    color: var(--dominant-white-color);
+    font-family: var(--main-font);
+    margin-left: 10px;
+}
+
+
+/******* MODIFY USER PROFILE *******/
+
+.user-modify-profile-container {
+    max-width: 500px;
+    margin: 3% auto 0 auto;
+}
+
+.user-modify-profile-container input[type="file"]::-webkit-file-upload-button {
+    height: 30px;
+    background: transparent;
+    border: 2px solid var(--hero-section);
+    color: var(--dominant-white-color);
+    font-family: var(--main-font);
+    font-weight: 400;
+    font-size: 16px;
+}
+
+.user-modify-profile-container input[type="file"]::-webkit-file-upload-button:hover {
+    cursor: pointer;
+    transition: 1s;
+    background: var(--hero-section);
+
+}
+
+
+
+
+
 
 
 /********* CUSTOM CLASSES ***********/
@@ -923,4 +1032,33 @@ div.http_405 h1 {
     margin-bottom: 10px;
 }
 
+ul.nav {
+    display: flex;
+    align-items: center;
+}
+
+li.user-profile {
+    display: flex;
+    max-height: 60px;
+}
+
+.user-profile .user-username {
+    display: flex;
+    align-items: center;
+}
+
+.user-profile .user-profile-image {
+    margin-left: 5px;
+    padding: 10px;
+    width: 60px;
+}
+
+.user-profile div img {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    color: var(--dominant-white-color);
+
+}
 

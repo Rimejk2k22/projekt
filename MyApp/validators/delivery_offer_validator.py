@@ -6,7 +6,7 @@ class DeliveryOfferValidator:
 
     @classmethod
     def validate(cls, required_fields):
-        del required_fields['csrfmiddlewaretoken']
+        # del required_fields['csrfmiddlewaretoken']
         del required_fields['description']
         del required_fields['extras']
 

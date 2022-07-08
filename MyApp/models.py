@@ -7,16 +7,12 @@ from django.utils.translation import gettext_lazy
 # Create your models here.
 
 
-class User(AbstractUser):
-
-    def save(self, *args, **kwargs):
-        UserProfile.objects.create(user=self)
-        super().save()
-
-
 class UserProfile(models.Model):
-    avatar = models.ImageField(default='user.svg', null=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(default='user.svg', null=True, upload_to='uploaded')
+
+
+class User(AbstractUser):
+    profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE, null=True)
 
 
 class DeliveryInfo(models.Model):

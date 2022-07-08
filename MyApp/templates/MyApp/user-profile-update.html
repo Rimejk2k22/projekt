@@ -1,0 +1,61 @@
+{% extends 'MyApp/__base__.html' %}
+
+{% block content %}
+
+<section class="modify-user">
+    <div class="user-modify-profile-container">
+        <div class="modify-user-box">
+
+        <a href="{% url 'user-profile' %}">
+            <i class="fa-solid fa-arrow-left-long"></i>
+        </a>
+
+        <h2>Aktualizacja Profilu</h2>
+            <form method="POST" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="user-box">
+                    <input type="text" name="first_name">
+                    <label>Imię</label>
+                </div>
+
+                <div class="user-box">
+                    <input type="text" name="last_name">
+                    <label>Nazwisko</label>
+                </div>
+
+                <div class="user-box">
+                    <input type="email" name="email" required="">
+                    <label>E-mail</label>
+                </div>
+
+                <div class="user-box">
+                    <input type="file" name="avatar">
+                    <label>Wybierz Avatar</label>
+                </div>
+
+                <div class="user-box-submit">
+                    <button type="submit">
+                        <span></span>
+                        Zapisz
+                    </button>
+                </div>
+
+
+            {% if messages %}
+                <ul class="register-error">
+                    {% for message in messages %}
+                    <div>
+                        <i class="fa-solid fa-square-xmark"></i>
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    </div>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            </form>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}
